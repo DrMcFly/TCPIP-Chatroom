@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <time.h>
+#include <pthread.h>
 
 #define IP "127.0.0.1"
 #define PORT 2006
@@ -27,6 +28,9 @@ int local_fd, connection_fd;
 char receive_buffer[PACKET_SIZE] = {};
 char send_buffer[PACKET_SIZE] = {};
 
+// Global multithreading variables
+pthread_t thread;
+
 int main() {
     
     socket_init();
@@ -35,7 +39,9 @@ int main() {
 
     while (1) {
         
-        accept_conn();
+        pthread_create(&thread, NULL, accept_conn, NULL);
+        // accept_conn();
+        pthread_join(thread, NULL);
         receive_packet();
         
     }
